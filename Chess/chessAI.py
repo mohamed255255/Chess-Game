@@ -63,12 +63,12 @@ STALEMATE = 0
 DEPTH = 3
 
 
-def findBestMove(game_state, valid_moves, return_queue):
+def findBestMove(game_state, valid_moves, return_queue): ##maxmization function
     global next_move
     next_move = None
     random.shuffle(valid_moves)
     findMoveNegaMaxAlphaBeta(game_state, valid_moves, DEPTH, -CHECKMATE, CHECKMATE,
-                             1 if game_state.white_to_move else -1)
+                             1 if game_state.white_to_move else -1)  ## return best of algo
     return_queue.put(next_move)
 
 
@@ -95,7 +95,7 @@ def findMoveNegaMaxAlphaBeta(game_state, valid_moves, depth, alpha, beta, turn_m
     return max_score
 
 
-def scoreBoard(game_state):
+def scoreBoard(game_state): ##Hueristic function
     """
     Score the board. A positive score is good for white, a negative score is good for black.
     """
@@ -121,7 +121,7 @@ def scoreBoard(game_state):
 
     return score
 
-
+#
 def findRandomMove(valid_moves):
     """
     Picks and returns a random valid move.

@@ -1,10 +1,10 @@
-
 import pygame as p
-
 from Chess import ChessEngine
 import chessAI
 import sys
 from multiprocessing import Process, Queue
+import os
+import random
 
 BOARD_WIDTH = BOARD_HEIGHT = 512
 MOVE_LOG_PANEL_WIDTH = 250
@@ -22,9 +22,8 @@ def loadImages():
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK',
               'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load(
-            "images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
-
+        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
+        print(os.getcwd())
 
 def main():
     """
@@ -44,49 +43,32 @@ def main():
     running = True
     # no square is selected initially, this will keep track of the last click of the user (tuple(row,col))
     square_selected = ()
-    player_clicks = []  # this will keep track of player clicks (two tuples)
+    computer_clicks = []  # this will keep track of player clicks (two tuples)
     game_over = False
     ai_thinking = False
     move_undone = False
     move_finder_process = None
     move_log_font = p.font.SysFont("Arial", 14, False, False)
-    player_one = True  # if a human is playing white, then this will be True, else False
-    player_two = False  # if a hyman is playing white, then this will be True, else False
+    player_one = True  # if computer is playing white, then this will be True, else False
+    player_two = False  # if computer is playing white, then this will be True, else False
 
     while running:
-        human_turn = (game_state.white_to_move and player_one) or (
+        computer_turn = (game_state.white_to_move and player_one) or (
             not game_state.white_to_move and player_two)
         for e in p.event.get():
             if e.type == p.QUIT:
                 p.quit()
                 sys.exit()
-            # mouse handler
-            elif e.type == p.MOUSEBUTTONDOWN:
-                if not game_over:
-                    location = p.mouse.get_pos()  # (x, y) location of the mouse
-                    col = location[0] // SQUARE_SIZE
-                    row = location[1] // SQUARE_SIZE
-                    # user clicked the same square twice
-                    if square_selected == (row, col) or col >= 8:
-                        square_selected = ()  # deselect
-                        player_clicks = []  # clear clicks
-                    else:
-                        square_selected = (row, col)
-                        # append for both 1st and 2nd click
-                        player_clicks.append(square_selected)
-                    if len(player_clicks) == 2 and human_turn:  # after 2nd click
-                        move = ChessEngine.Move(
-                            player_clicks[0], player_clicks[1], game_state.board)
-                        for i in range(len(valid_moves)):
-                            if move == valid_moves[i]:
-                                game_state.makeMove(valid_moves[i])
-                                move_made = True
-                                animate = True
-                                square_selected = ()  # reset user clicks
-                                player_clicks = []
-                        if not move_made:
-                            player_clicks = [square_selected]
 
+            if not game_over:
+                 if computer_turn and not move_made:  # Check if it's the computer's turn and no move has been made yet
+                     valid_moves = game_state.getValidMoves() ## retrieves the list of valid moves for the current game state
+                     if len(valid_moves) > 0:
+                            # Select a random move from the list of valid moves
+                            random_move = random.choice(valid_moves)
+                            game_state.makeMove(random_move)
+                            move_made = True ## to indicate that a move has been made by the computer.
+                            animate = True ##  to enable animation for the move.
             # key handler
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:  # undo when 'z' is pressed
@@ -102,7 +84,7 @@ def main():
                     game_state = ChessEngine.GameState()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
-                    player_clicks = []
+                    computer_clicks = []
                     move_made = False
                     animate = False
                     game_over = False
@@ -111,8 +93,8 @@ def main():
                         ai_thinking = False
                     move_undone = True
 
-        # AI move finder
-        if not game_over and not human_turn and not move_undone:
+        # AI agent that applies the algorithms
+        if not game_over and not computer_turn and not move_undone:
             if not ai_thinking:
                 ai_thinking = True
                 return_queue = Queue()  # used to pass data between threads
@@ -123,7 +105,7 @@ def main():
             if not move_finder_process.is_alive():
                 ai_move = return_queue.get()
                 if ai_move is None:
-                    ai_move = chessAI.findRandomMove(valid_moves)
+                    ai_move = chessAI.findRandomMove(valid_moves) ## if i have many best solutions i select any of them
                 game_state.makeMove(ai_move)
                 move_made = True
                 animate = True
@@ -298,4 +280,4 @@ def animateMove(move, screen, board, clock):
 
 
 if __name__ == "__main__":
-    main()
+     main()

@@ -1,5 +1,5 @@
 import random
-
+import ChessEngine
 piece_score = {"K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 
 knight_scores = [[0.0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.0],
@@ -61,8 +61,7 @@ piece_position_scores = {"wN": knight_scores,
 CHECKMATE = 1000
 STALEMATE = 0
 DEPTH = 3
-
-
+# Minimax Algorithm
 def findBestMove(game_state, valid_moves, return_queue): ##maxmization function
     global next_move
     next_move = None
@@ -93,8 +92,6 @@ def findMoveNegaMaxAlphaBeta(game_state, valid_moves, depth, alpha, beta, turn_m
         if alpha >= beta:
             break
     return max_score
-
-
 def scoreBoard(game_state): ##Hueristic function
     """
     Score the board. A positive score is good for white, a negative score is good for black.

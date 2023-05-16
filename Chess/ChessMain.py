@@ -55,49 +55,30 @@ def main():
     while running:
         computer_turn = (game_state.white_to_move and player_one) or (
             not game_state.white_to_move and player_two)
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                p.quit()
-                sys.exit()
 
-            if not game_over:
-                 if computer_turn and not move_made:  # Check if it's the computer's turn and no move has been made yet
-                     valid_moves = game_state.getValidMoves() ## retrieves the list of valid moves for the current game state
-                     if len(valid_moves) > 0:
-                            # Select a random move from the list of valid moves
-                            random_move = random.choice(valid_moves)
-                            game_state.makeMove(random_move)
-                            move_made = True ## to indicate that a move has been made by the computer.
-                            animate = True ##  to enable animation for the move.
-            # key handler
-            elif e.type == p.KEYDOWN:
-                if e.key == p.K_z:  # undo when 'z' is pressed
-                    game_state.undoMove()
-                    move_made = True
-                    animate = False
-                    game_over = False
-                    if ai_thinking:
-                        move_finder_process.terminate()
-                        ai_thinking = False
-                    move_undone = True
-                if e.key == p.K_r:  # reset the game when 'r' is pressed
-                    game_state = ChessEngine.GameState()
-                    valid_moves = game_state.getValidMoves()
-                    square_selected = ()
-                    computer_clicks = []
-                    move_made = False
-                    animate = False
-                    game_over = False
-                    if ai_thinking:
-                        move_finder_process.terminate()
-                        ai_thinking = False
-                    move_undone = True
+        ## apply the event of closing the window 
+        events = p.event.get()
+        if any(event.type == p.QUIT for event in events):
+            p.quit()
+            sys.exit()
+
+        if not game_over:
+             if computer_turn and not move_made:  # Check if it's the computer's turn and no move has been made yet
+                 valid_moves = game_state.getValidMoves() ## retrieves the list of valid moves for the current game state
+                 if len(valid_moves) > 0:
+                        # Select a random move from the list of valid moves
+                        random_move = random.choice(valid_moves)
+                        game_state.makeMove(random_move)
+                        move_made = True ## to indicate that a move has been made by the computer.
+                        animate = True ##  to enable animation for the move.
 
         # AI agent that applies the algorithms
         if not game_over and not computer_turn and not move_undone:
             if not ai_thinking:
                 ai_thinking = True
                 return_queue = Queue()  # used to pass data between threads
+
+                ##### this agent uses only minimax implement a class buttom to call one of them so target = CHOICE selected by the buttom
                 move_finder_process = Process(target=chessAI.findBestMove, args=(
                     game_state, valid_moves, return_queue))
                 move_finder_process.start()

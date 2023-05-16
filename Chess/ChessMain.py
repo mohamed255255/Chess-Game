@@ -78,15 +78,16 @@ def main():
                 ai_thinking = True
                 return_queue = Queue()  # used to pass data between threads
 
-                ##### this agent uses only minimax implement a class buttom to call one of them so target = CHOICE selected by the buttom
+                depth = 3  # Specify the desired depth level here
+
                 move_finder_process = Process(target=chessAI.findBestMove, args=(
-                    game_state, valid_moves, return_queue))
+                    game_state, valid_moves, return_queue, depth))
                 move_finder_process.start()
 
             if not move_finder_process.is_alive():
                 ai_move = return_queue.get()
                 if ai_move is None:
-                    ai_move = chessAI.findRandomMove(valid_moves) ## if i have many best solutions i select any of them
+                    ai_move = chessAI.findRandomMove(valid_moves)  # if I have many best solutions, I select any of them
                 game_state.makeMove(ai_move)
                 move_made = True
                 animate = True

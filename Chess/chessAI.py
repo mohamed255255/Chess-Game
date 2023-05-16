@@ -62,11 +62,11 @@ CHECKMATE = 1000
 STALEMATE = 0
 DEPTH = 3
 # Minimax Algorithm
-def findBestMove(game_state, valid_moves, return_queue):
+def findBestMove(game_state, valid_moves, return_queue, depth):
     global next_move
     next_move = None
     random.shuffle(valid_moves)
-    findMoveAlphaBeta(game_state, valid_moves, DEPTH, -CHECKMATE, CHECKMATE,
+    findMoveAlphaBeta(game_state, valid_moves, depth, -CHECKMATE, CHECKMATE,
                       1 if game_state.white_to_move else -1)
     return_queue.put(next_move)
 
@@ -93,6 +93,7 @@ def findMoveAlphaBeta(game_state, valid_moves, depth, alpha, beta, turn_multipli
             break
 
     return max_score
+
 
 def scoreBoard(game_state): ##Hueristic function
     """

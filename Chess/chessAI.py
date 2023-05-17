@@ -88,8 +88,11 @@ def findMoveMiniMax(game_state, valid_moves, depth, turn_multiplier):
                 next_move = move
         game_state.undoMove()
     return max_score
+<<<<<<< HEAD
 ######################
 ####################
+=======
+>>>>>>> 03769401983360b66cd80de04f6a9ca7d54e7664
 
 def findBestMoveAlphaBeta(game_state, valid_moves, return_queue, depth):
     global next_move

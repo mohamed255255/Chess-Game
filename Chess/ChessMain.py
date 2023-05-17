@@ -5,6 +5,7 @@ import sys
 from multiprocessing import Process, Queue
 import os
 import random
+from main import *
 
 BOARD_WIDTH = BOARD_HEIGHT = 512
 MOVE_LOG_PANEL_WIDTH = 250
@@ -25,7 +26,7 @@ def loadImages():
         IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
         print(os.getcwd())
 
-def main():
+def main(dep,algo):
     """
     The main driver for our code.
     This will handle user input and updating the graphics.
@@ -56,7 +57,7 @@ def main():
         computer_turn = (game_state.white_to_move and player_one) or (
             not game_state.white_to_move and player_two)
 
-        ## apply the event of closing the window 
+        ## apply the event of closing the window
         events = p.event.get()
         if any(event.type == p.QUIT for event in events):
             p.quit()
@@ -78,12 +79,24 @@ def main():
                 ai_thinking = True
                 return_queue = Queue()  # used to pass data between threads
 
-                depth = 3  # Specify the desired depth level here
+                depth = dep  # Specify the desired depth level here
+                ##print("THEDEPTH: : : ",depth)
 
-                move_finder_process = Process(target=chessAI.findBestMove, args=(
-                    game_state, valid_moves, return_queue, depth))
-                move_finder_process.start()
 
+############################################################################
+                print(algo)                 #   Work with specific algorithm
+                if algo == "Alpha Beta":
+
+                    move_finder_process = Process(target = chessAI.findBestMoveAlphaBeta, args=(
+                        game_state, valid_moves, return_queue, depth))
+                    move_finder_process.start()
+                else:
+                    move_finder_process = Process(target=chessAI.findBestMoveMiniMax, args=(
+                        game_state, valid_moves, return_queue, depth))
+                    move_finder_process.start()
+
+
+##################################################################################
             if not move_finder_process.is_alive():
                 ai_move = return_queue.get()
                 if ai_move is None:
@@ -262,4 +275,6 @@ def animateMove(move, screen, board, clock):
 
 
 if __name__ == "__main__":
-     main()
+     depth=WelcomeScreen().getDepth()
+     algo=WelcomeScreen.get_algorithm()
+     main(depth,algo)

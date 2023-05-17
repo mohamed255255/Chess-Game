@@ -1,5 +1,6 @@
 import random
 import ChessEngine
+
 piece_score = {"K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 
 knight_scores = [[0.0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.0],
@@ -61,15 +62,42 @@ piece_position_scores = {"wN": knight_scores,
 CHECKMATE = 1000
 STALEMATE = 0
 DEPTH = 3
+
+
 # Minimax Algorithm
-def findBestMove(game_state, valid_moves, return_queue, depth):
+def findBestMoveMiniMax(game_state, valid_moves, return_queue, depth):
+    global next_move
+    next_move = None
+    random.shuffle(valid_moves)
+    findMoveMiniMax(game_state, valid_moves, depth , 1 if game_state.white_to_move else -1)
+    return_queue.put(next_move)
+
+def findMoveMiniMax(game_state, valid_moves, depth, turn_multiplier):
+    global next_move
+    if depth == 0:
+        return turn_multiplier * scoreBoard(game_state)
+
+    max_score = -CHECKMATE
+    for move in valid_moves:
+        game_state.makeMove(move)
+        next_moves = game_state.getValidMoves()
+        score = -findMoveMiniMax(game_state, next_moves, depth - 1, -turn_multiplier)
+        if score > max_score:
+            max_score = score
+            if depth == DEPTH:
+                next_move = move
+        game_state.undoMove()
+    return max_score
+######################
+####################
+
+def findBestMoveAlphaBeta(game_state, valid_moves, return_queue, depth):
     global next_move
     next_move = None
     random.shuffle(valid_moves)
     findMoveAlphaBeta(game_state, valid_moves, depth, -CHECKMATE, CHECKMATE,
                       1 if game_state.white_to_move else -1)
     return_queue.put(next_move)
-
 
 def findMoveAlphaBeta(game_state, valid_moves, depth, alpha, beta, turn_multiplier):
     global next_move
@@ -81,19 +109,18 @@ def findMoveAlphaBeta(game_state, valid_moves, depth, alpha, beta, turn_multipli
         game_state.makeMove(move)
         next_moves = game_state.getValidMoves()
         score = -findMoveAlphaBeta(game_state, next_moves,
-                                   depth - 1, -beta, -alpha, -turn_multiplier)
+                                   depth - 1, -beta, -alpha, -turn_multiplier) ####  parameters alpha w beta not in minimax
         if score > max_score:
             max_score = score
             if depth == DEPTH:
                 next_move = move
         game_state.undoMove()
 
-        alpha = max(alpha, max_score)
-        if alpha >= beta:
+        alpha = max(alpha, max_score) ##### not in minimax
+        if alpha >= beta: #### not in mini max
             break
 
     return max_score
-
 
 def scoreBoard(game_state): ##Hueristic function
     """

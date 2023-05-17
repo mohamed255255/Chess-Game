@@ -81,13 +81,7 @@ def main(dep,algo):
 
                 depth = dep  # Specify the desired depth level here
                 ##print("THEDEPTH: : : ",depth)
-
-<<<<<<< HEAD
-=======
-                move_finder_process = Process(target = chessAI.findBestMoveAlphaBeta, args=(
-                    game_state, valid_moves, return_queue, depth))
-                move_finder_process.start()
->>>>>>> 03769401983360b66cd80de04f6a9ca7d54e7664
+                
 
 ############################################################################
                 print(algo)                 #   Work with specific algorithm

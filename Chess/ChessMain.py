@@ -80,7 +80,7 @@ def main():
 
                 depth = 3  # Specify the desired depth level here
 
-                move_finder_process = Process(target=chessAI.findBestMove, args=(
+                move_finder_process = Process(target = chessAI.findBestMoveAlphaBeta, args=(
                     game_state, valid_moves, return_queue, depth))
                 move_finder_process.start()
 

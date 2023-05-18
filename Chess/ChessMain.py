@@ -62,7 +62,7 @@ def main(dep,algo):
         if any(event.type == p.QUIT for event in events):
             p.quit()
             sys.exit()
-
+       #check if game is over
         if not game_over:
              if computer_turn and not move_made:  # Check if it's the computer's turn and no move has been made yet
                  valid_moves = game_state.getValidMoves() ## retrieves the list of valid moves for the current game state
@@ -105,7 +105,7 @@ def main(dep,algo):
                 move_made = True
                 animate = True
                 ai_thinking = False
-
+    #check on moves are done
         if move_made:
             if animate:
                 animateMove(game_state.move_log[-1],
@@ -134,7 +134,7 @@ def main(dep,algo):
         clock.tick(MAX_FPS)
         p.display.flip()
 
-
+      #draw game in screen
 def drawGameState(screen, game_state, valid_moves, square_selected):
     """
     Responsible for all the graphics within current game state.
@@ -198,7 +198,7 @@ def drawPieces(screen, board):
                 screen.blit(IMAGES[piece], p.Rect(
                     column * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
-
+   # show moves on screen
 def drawMoveLog(screen, game_state, font):
     """
     Draws the move log.

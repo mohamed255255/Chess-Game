@@ -1,3 +1,4 @@
+#this file has two algorithms minimax algorithm and alpha-beta algorithm
 import random
 import ChessEngine
 
@@ -115,8 +116,8 @@ def findMoveAlphaBeta(game_state, valid_moves, depth, alpha, beta, turn_multipli
                 next_move = move
         game_state.undoMove()
 
-        alpha = max(alpha, max_score) ##### not in minimax
-        if alpha >= beta: #### not in mini max
+        alpha = max(alpha, max_score) 
+        if alpha >= beta: #pruning condition
             break
 
     return max_score

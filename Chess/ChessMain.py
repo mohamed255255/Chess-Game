@@ -146,7 +146,7 @@ def drawGameState(screen, game_state, valid_moves, square_selected):
 
 def drawBoard(screen):
     """
-    Draw the squares on the board.
+    Draw the squares in the board.
     The top left square is always light.
     """
     global colors

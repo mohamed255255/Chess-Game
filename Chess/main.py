@@ -92,7 +92,7 @@ class WelcomeScreen(tk.Tk):
         #print("Depth: ",selected)
         main(Depth,algorithm)  # to run the game
 
-
+################# hello
 if __name__ == "__main__":
     app = WelcomeScreen()
     app.mainloop()
